@@ -1,5 +1,5 @@
 import jwt, { Secret } from 'jsonwebtoken';
-import config from '../config';
+import config from '../config/env';
 import { NextFunction, Request, Response } from 'express';
 
 interface RequestWithUser extends Request {

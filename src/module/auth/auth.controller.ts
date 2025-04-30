@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { Secret } from "jsonwebtoken";
-import prisma from "../../prisma/client";
+import prisma from "../../config/client";
 import {
   generateAccessToken,
   generateRefreshToken,
-} from "../../utils/jwtToken";
-import config from "../../config";
+} from "../../middleware/jwtToken";
+import config from "../../config/env";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -86,6 +86,4 @@ export const refreshToken = (req: Request, res: Response) => {
   );
 };
 
-export const getProtectedData = (req: Request, res: Response) => {
-  res.json({ message: "Protected route accessed" });
-};
+
