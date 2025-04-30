@@ -6,6 +6,9 @@ import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './module/auth/auth.route'
 import movieRoutes from './module/movie/movie.route'
 import reviewRoutes from './module/review/review.route'
+import likeRoutes from './module/like/like.route'
+import commentRoutes from './module/comment/comment.route'
+import watchlistRoutes from './module/watchList/watchlist.route'
 
 const app = express();
 
@@ -26,6 +29,9 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/likes', likeRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/watchlist', watchlistRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
