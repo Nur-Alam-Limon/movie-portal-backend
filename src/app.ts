@@ -5,6 +5,7 @@ import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './module/auth/auth.route'
 import movieRoutes from './module/movie/movie.route'
+import reviewRoutes from './module/review/review.route'
 
 const app = express();
 
@@ -17,12 +18,14 @@ app.get('/', (req: Request, res: Response) => {
     res.status(200).json({
       message: 'Welcome to Movie Portal Backend!',
       endpoints: {
-        auth: '/api/auth',
+        movies: '/api/movies',
+        reviews: '/api/reviews'
       },
     });
   });
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

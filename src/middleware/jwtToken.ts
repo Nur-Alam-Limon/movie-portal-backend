@@ -1,10 +1,12 @@
 import jwt, { Secret } from 'jsonwebtoken';
 import config from '../config/env';
 import { NextFunction, Request, Response } from 'express';
+import prisma from '../config/client';
 
 interface RequestWithUser extends Request {
   user?: {
     id: string;
+    role?: string
   };
 }
 
@@ -36,6 +38,28 @@ const verifyToken = async (req: RequestWithUser, res: Response, next: NextFuncti
     console.error("Error verifying token:", error.message);
     res.status(401).json({ success: false, message: 'Unauthorized' });
   }
+};
+
+// Middleware to check for user roles
+export const authorizeRoles = (...roles: string[]) => {
+  return async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.user?.id) {
+        res.status(403).json({ success: false, message: 'Access Denied' });
+        return;
+      }
+
+      const user = await prisma.user.findUnique({ where: { id: parseInt(req.user.id) } });
+      if (!user || !roles.includes(user.role)) {
+        res.status(403).json({ success: false, message: 'Forbidden' });
+        return;
+      }
+      
+      next();
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+  };
 };
 
 
