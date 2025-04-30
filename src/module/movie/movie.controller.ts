@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createMovieService, deleteMovieService, getAllMoviesService, getMoviesByIdService, updateMovieService } from "./movie.service";
+import { createMovieService, deleteMovieService, getAllMoviesService, getMoviesByIdService, searchMoviesService, updateMovieService } from "./movie.service";
 
 
 export const createMovie = async (req: Request, res: Response) => {
@@ -34,4 +34,13 @@ export const updateMovie = async (req: Request, res: Response) => {
 export const deleteMovie = async (req: Request, res: Response) => {
   await deleteMovieService(parseInt(req.params.id));
   res.status(204).send();
+};
+
+export const searchMovies = async (req: Request, res: Response) => {
+  try {
+    const result = await searchMoviesService(req.query);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
 };

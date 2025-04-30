@@ -5,6 +5,7 @@ import {
   deleteMovie,
   getAllMovies,
   getMoviesById,
+  searchMovies,
   updateMovie,
 } from "./movie.controller";
 
@@ -15,5 +16,7 @@ router.get("/", getAllMovies);
 router.get("/:id", getMoviesById);
 router.put("/:id", verifyToken, authorizeRoles("admin"), updateMovie);
 router.delete("/:id", verifyToken, authorizeRoles("admin"), deleteMovie);
+router.get('/search', searchMovies);
+
 
 export default router;
