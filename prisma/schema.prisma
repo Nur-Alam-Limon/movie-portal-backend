@@ -8,15 +8,17 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @default(autoincrement())
-  email      String       @unique
-  password   String
-  role       String       @default("user")
-  createdAt  DateTime     @default(now())
-  Review     Review[]
-  ReviewLike ReviewLike[]
-  Comment    Comment[]
-  Watchlist  Watchlist[]
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  role        String        @default("user")
+  createdAt   DateTime      @default(now())
+  Review      Review[]
+  ReviewLike  ReviewLike[]
+  Comment     Comment[]
+  Watchlist   Watchlist[]
+  Transaction Transaction[]
+  MovieAccess MovieAccess[]
 }
 
 model Movie {
@@ -26,6 +28,7 @@ model Movie {
   genres         String[]
   releaseYear    Int
   director       String
+  accessUrl      String
   cast           String[]
   streamingLinks String[] // e.g. Netflix, YouTube, etc.
   priceBuy       Float
@@ -34,8 +37,10 @@ model Movie {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  reviews   Review[]
-  Watchlist Watchlist[]
+  reviews     Review[]
+  Watchlist   Watchlist[]
+  Transaction Transaction[]
+  MovieAccess MovieAccess[]
 }
 
 model Review {
@@ -95,4 +100,44 @@ model Watchlist {
   movie Movie @relation(fields: [movieId], references: [id])
 
   @@unique([userId, movieId])
+}
+
+model Transaction {
+  id              String            @id @default(cuid())
+  tranId          String            @unique
+  buyerId         Int
+  movieId         Int
+  type            AccessType
+  totalAmount     Float
+  status          TransactionStatus @default(PENDING)
+  accessExpiresAt DateTime? // Only for rentals
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  user  User  @relation(fields: [buyerId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+}
+
+model MovieAccess {
+  id         String     @id @default(cuid())
+  userId     Int
+  movieId    Int
+  accessType AccessType
+  accessLink String
+  expiresAt  DateTime?
+
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+}
+
+enum AccessType {
+  BUY
+  RENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
