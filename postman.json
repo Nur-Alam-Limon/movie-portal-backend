@@ -1,238 +1,443 @@
 {
-    "info": {
-      "name": "Movie and Series Rating Portal API",
-      "_postman_id": "12345-67890",
-      "description": "API for the Movie and Series Rating & Streaming Portal"
+  "info": {
+    "name": "Movie and Series Rating Portal API",
+    "_postman_id": "12345-67890",
+    "description": "API for the Movie and Series Rating & Streaming Portal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "User Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"testPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"testPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        }
+      ]
     },
-    "item": [
-      {
-        "name": "Authentication",
-        "item": [
-          {
-            "name": "User Registration",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/auth/register",
-                "host": ["{{base_url}}"],
-                "path": ["auth", "register"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"email\": \"test@example.com\", \"password\": \"testPassword123\"}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
+    {
+      "name": "Admin System",
+      "item": [
+        {
+          "name": "Get Dashboard Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard"]
             },
-            "response": []
-          },
-          {
-            "name": "User Login",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/auth/login",
-                "host": ["{{base_url}}"],
-                "path": ["auth", "login"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"email\": \"test@example.com\", \"password\": \"testPassword123\"}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
-            },
-            "response": []
-          }
-        ]
-      },
-      {
-        "name": "Movies and Series",
-        "item": [
-          {
-            "name": "Get Movies and Series List",
-            "request": {
-              "method": "GET",
-              "url": {
-                "raw": "{{base_url}}/movies-series",
-                "host": ["{{base_url}}"],
-                "path": ["movies-series"]
+            "headers": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
               }
-            },
-            "response": []
+            ]
           },
-          {
-            "name": "Get Movie/Series Details",
-            "request": {
-              "method": "GET",
-              "url": {
-                "raw": "{{base_url}}/movies-series/{{movieId}}",
-                "host": ["{{base_url}}"],
-                "path": ["movies-series", "{{movieId}}"]
-              }
-            },
-            "response": []
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "item": [
+        {
+          "name": "Get All Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies",
+              "host": ["{{base_url}}"],
+              "path": ["movies"]
+            }
           },
-          {
-            "name": "Add Movie/Series (Admin)",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/admin/movies-series",
-                "host": ["{{base_url}}"],
-                "path": ["admin", "movies-series"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"title\": \"Movie Title\", \"description\": \"Movie Description\", \"genre\": \"Drama\", \"releaseYear\": 2025, \"director\": \"Director Name\", \"cast\": \"Actor1, Actor2\", \"platform\": \"Netflix\", \"price\": { \"buy\": 15, \"rent\": 5 }}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
-            },
-            "response": []
-          }
-        ]
-      },
-      {
-        "name": "Review System",
-        "item": [
-          {
-            "name": "Submit Review",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/reviews/{{movieId}}",
-                "host": ["{{base_url}}"],
-                "path": ["reviews", "{{movieId}}"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"rating\": 8, \"review\": \"Great movie!\", \"tags\": [\"classic\", \"underrated\"], \"spoiler\": false}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" },
-                { "key": "Authorization", "value": "Bearer {{access_token}}" }
-              ]
-            },
-            "response": []
+          "response": []
+        },
+        {
+          "name": "Get Movie Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/{{movieId}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movieId}}"]
+            }
           },
-          {
-            "name": "Get Reviews for Movie/Series",
-            "request": {
-              "method": "GET",
-              "url": {
-                "raw": "{{base_url}}/reviews/{{movieId}}",
-                "host": ["{{base_url}}"],
-                "path": ["reviews", "{{movieId}}"]
-              }
+          "response": []
+        },
+        {
+          "name": "Add Movie (Admin)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/movies",
+              "host": ["{{base_url}}"],
+              "path": ["movies"]
             },
-            "response": []
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception\",\n  \"synopsis\": \"A mind-bending thriller.\",\n  \"genres\": [\"Sci-Fi\", \"Thriller\"],\n  \"releaseYear\": 2010,\n  \"director\": \"Christopher Nolan\",\n  \"cast\": [\"Leonardo DiCaprio\", \"Joseph Gordon-Levitt\"],\n  \"streamingLinks\": [\"Netflix\", \"Amazon Prime\"],\n  \"priceBuy\": 15.99,\n  \"priceRent\": 5.99,\n  \"discount\": 10.0\n}"
+            },
+            "headers": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ]
           },
-          {
-            "name": "Approve/Unpublish Review (Admin)",
-            "request": {
-              "method": "PATCH",
-              "url": {
-                "raw": "{{base_url}}/admin/reviews/{{reviewId}}/status",
-                "host": ["{{base_url}}"],
-                "path": ["admin", "reviews", "{{reviewId}}", "status"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"status\": \"approved\"}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
+          "response": []
+        },
+        {
+          "name": "Update Movie (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{base_url}}/movies/{{movieId}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movieId}}"]
             },
-            "response": []
-          }
-        ]
-      },
-      {
-        "name": "Payment System",
-        "item": [
-          {
-            "name": "Initiate Payment",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/payment/initiate-payment",
-                "host": ["{{base_url}}"],
-                "path": ["payment", "initiate-payment"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"total_amount\": 20, \"currency\": \"USD\", \"tran_id\": \"12345\", \"success_url\": \"{{base_url}}/payment/success\", \"fail_url\": \"{{base_url}}/payment/fail\", \"cancel_url\": \"{{base_url}}/payment/cancel\", \"customer\": {\"name\": \"Customer Name\", \"email\": \"customer@example.com\", \"phone\": \"1234567890\", \"address\": \"Customer Address\"}, \"itemIDs\": [\"movieId1\", \"movieId2\"]}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception Updated\",\n  \"priceBuy\": 12.99,\n  \"discount\": 15.0\n}"
             },
-            "response": []
+            "headers": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ]
           },
-          {
-            "name": "Payment Success Callback",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/ssl/success/:id",
-                "host": ["{{base_url}}"],
-                "path": ["ssl", "success", ":id"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"tran_id\": \"12345\"}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
+          "response": []
+        },
+        {
+          "name": "Delete Movie (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/movies/{{movieId}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movieId}}"]
             },
-            "response": []
+            "headers": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ]
           },
-          {
-            "name": "Payment Failure Callback",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/ssl/fail",
-                "host": ["{{base_url}}"],
-                "path": ["ssl", "fail"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"tran_id\": \"12345\"}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
+          "response": []
+        },
+        {
+          "name": "Search Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/search?title=Inception&genre=Sci-Fi&platform=Netflix&minRating=7&sort=ratingDesc",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "search"],
+              "query": [
+                { "key": "title", "value": "Inception" },
+                { "key": "genre", "value": "Sci-Fi" },
+                { "key": "platform", "value": "Netflix" },
+                { "key": "minRating", "value": "7" },
+                { "key": "sort", "value": "ratingDesc" }
               ]
-            },
-            "response": []
+            }
           },
-          {
-            "name": "Payment Cancel Callback",
-            "request": {
-              "method": "POST",
-              "url": {
-                "raw": "{{base_url}}/ssl/cancel",
-                "host": ["{{base_url}}"],
-                "path": ["ssl", "cancel"]
-              },
-              "body": {
-                "mode": "raw",
-                "raw": "{\"tran_id\": \"12345\"}"
-              },
-              "headers": [
-                { "key": "Content-Type", "value": "application/json" }
-              ]
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Review System",
+      "item": [
+        {
+          "name": "Submit Review",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["reviews"]
             },
-            "response": []
-          }
-        ]
-      }
-    ]
-  }
-  
+            "body": {
+              "mode": "raw",
+              "raw": "{\"movieId\": \"{{movieId}}\", \"rating\": 8, \"review\": \"Great movie!\", \"tags\": [\"classic\", \"underrated\"], \"spoiler\": false}"
+            },
+            "headers": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{base_url}}/reviews/{{reviewId}}",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "{{reviewId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rating\": 9, \"review\": \"Even better on second watch!\", \"tags\": [\"must-watch\"], \"spoiler\": true}"
+            },
+            "headers": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/reviews/{{reviewId}}",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "{{reviewId}}"]
+            },
+            "headers": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Review Approval (Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/reviews/{{reviewId}}/approve",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "{{reviewId}}", "approve"]
+            },
+            "headers": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ]
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comment System",
+      "item": [
+        {
+          "name": "Add Comment to Review",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/comments",
+              "host": ["{{base_url}}"],
+              "path": ["comments"]
+            },
+            "headers": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reviewId\": 1, \"text\": \"I totally agree with this review!\"}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comments for Review",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/comments/1",
+              "host": ["{{base_url}}"],
+              "path": ["comments", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Like System",
+      "item": [
+        {
+          "name": "Toggle Like on Review",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/likes/1",
+              "host": ["{{base_url}}"],
+              "path": ["likes", "1"]
+            },
+            "headers": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Watchlist System",
+      "item": [
+        {
+          "name": "Toggle Watchlist for Movie",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/watchlist/1",
+              "host": ["{{base_url}}"],
+              "path": ["watchlist", "1"]
+            },
+            "headers": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Watchlist",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/watchlist",
+              "host": ["{{base_url}}"],
+              "path": ["watchlist"]
+            },
+            "headers": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payment System",
+      "item": [
+        {
+          "name": "Initiate Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/payments/initiate-payment",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "initiate-payment"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"total_amount\": 200,\n  \"tran_id\": \"12345\",\n  \"movieID\": 1,\n  \"userID\": 1,\n  \"accessType\": \"RENT\",\n  \"customer\": {\n    \"name\": \"Customer Name\",\n    \"email\": \"customer@example.com\",\n    \"phone\": \"1234567890\",\n    \"address\": \"Customer Address\"\n  }\n}"
+            },
+            "headers": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ]
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Success Callback",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/payments/ssl/success/12345",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "ssl", "success", "12345"]
+            },
+            "headers": [{ "key": "Content-Type", "value": "application/json" }]
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Failure Callback",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/payments/ssl/fail",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "ssl", "fail"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tran_id\": \"12345\"\n}"
+            },
+            "headers": [{ "key": "Content-Type", "value": "application/json" }]
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Cancel Callback",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/payments/ssl/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "ssl", "cancel"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tran_id\": \"12345\"\n}"
+            },
+            "headers": [{ "key": "Content-Type", "value": "application/json" }]
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
