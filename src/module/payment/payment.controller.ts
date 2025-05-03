@@ -3,6 +3,13 @@ import { sendPaymentSuccessEmail } from "../../utils/email";
 import { Request, Response } from "express";
 import SSLCommerzPayment from "sslcommerz-lts";
 
+interface RequestWithUser extends Request {
+  user?: {
+    id: string;
+    role?: string
+  };
+}
+
 export const initiatePayment = async (req: Request, res: Response) => {
   const {
     total_amount,
@@ -182,3 +189,52 @@ const generateAccessLink = async (movieId: number): Promise<string> => {
   const movie = await prisma.movie.findUnique({ where: { id: movieId } });
   return movie?.accessUrl || "";
 };
+
+
+export const getMyTransactions = async (req: RequestWithUser, res: Response) => {
+  const userId = req?.user?.id
+
+  if (!userId) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: { buyerId: parseInt(userId) },
+      include: {
+        movie: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.status(200).json(transactions);
+    return;
+  } catch (error) {
+    console.error("Error fetching user transactions:", error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
+  }
+};
+
+
+export const getAllTransactions = async (req: Request, res: Response) => {
+  try {
+    const transactions = await prisma.transaction.findMany({
+      include: {
+        user: { select: { id: true, email: true } },
+        movie: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.status(200).json(transactions);
+    return;
+  } catch (error) {
+    console.error("Error fetching all transactions:", error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
+  }
+};
+
+

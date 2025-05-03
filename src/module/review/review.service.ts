@@ -37,3 +37,44 @@ export const toggleApprovalReviewService = async (reviewId: any) => {
     data: { approved: !review.approved },
   });
 };
+
+export const getUserReviewsService = async (userId: string) => {
+
+  return prisma.review.findMany({
+    where: { userId: parseInt(userId) },
+    include: {
+      movie: true,
+      ReviewLike: true,
+      Comment: {
+        include: {
+          user: true,
+          replies: {
+            include: { user: true }
+          }
+        }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+};
+
+export const getAllReviewsService = async () => {
+  return prisma.review.findMany({
+    where: { approved: true },
+    include: {
+      movie: true,
+      user: true,
+      ReviewLike: true,
+      Comment: {
+        include: {
+          user: true,
+          replies: {
+            include: { user: true }
+          }
+        }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+};
+
