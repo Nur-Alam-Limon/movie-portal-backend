@@ -1,12 +1,85 @@
 import prisma from "../../config/client";
 import { Prisma } from '@prisma/client';
 
-export const createMovieService = (data: any) => prisma.movie.create({ data });
-export const getAllMoviesService = () => prisma.movie.findMany();
-export const getMoviesByIdService = (id: any) => prisma.movie.findUnique({ where: { id } });
-export const updateMovieService = (id: any, data: any) => prisma.movie.update({ where: { id }, data });
-export const deleteMovieService = (id: any) => prisma.movie.delete({ where: { id } });
+const movieIncludes = {
+  reviews: {
+    where: { approved: true },
+    select: {
+      rating: true,
+      Comment: {
+        include: {
+          user: true,
+        },
+      },
+      ReviewLike: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  },  
+  Watchlist: true,
+  Transaction: true,
+  MovieAccess: true,
+};
 
+// Helper to enrich movies with average rating & review count
+const enrichMoviesWithRatings = (movies: any[]) => {
+  return movies.map((m) => {
+    const ratings = m.reviews.map((r: any) => r.rating);
+    const averageRating = ratings.length
+      ? ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length
+      : 0;
+
+    return {
+      ...m,
+      rating: averageRating,
+      reviewCount: ratings.length,
+    };
+  });
+};
+
+// Create
+export const createMovieService = async (data: any) => {
+  const movie = await prisma.movie.create({ data, include: movieIncludes });
+  return enrichMoviesWithRatings([movie])[0];
+};
+
+// Get all
+export const getAllMoviesService = async () => {
+  const movies = await prisma.movie.findMany({ include: movieIncludes });
+  return enrichMoviesWithRatings(movies);
+};
+
+// Get by ID
+export const getMoviesByIdService = async (id: any) => {
+  const movie = await prisma.movie.findUnique({
+    where: { id },
+    include: movieIncludes,
+  });
+  return movie ? enrichMoviesWithRatings([movie])[0] : null;
+};
+
+// Update
+export const updateMovieService = async (id: any, data: any) => {
+  const movie = await prisma.movie.update({
+    where: { id },
+    data,
+    include: movieIncludes,
+  });
+  return enrichMoviesWithRatings([movie])[0];
+};
+
+// Delete
+export const deleteMovieService = async (id: any) => {
+  const movie = await prisma.movie.delete({
+    where: { id },
+    include: movieIncludes,
+  });
+  return enrichMoviesWithRatings([movie])[0];
+};
+
+// Search
 export const searchMoviesService = async (query: any) => {
   const {
     title,
@@ -74,27 +147,10 @@ export const searchMoviesService = async (query: any) => {
 
   const movies = await prisma.movie.findMany({
     where,
-    include: {
-      reviews: {
-        where: { approved: true },
-        select: { rating: true },
-      },
-    },
+    include: movieIncludes,
   });
 
-  // Enrich with rating data
-  const enriched = movies.map((m) => {
-    const ratings = m.reviews.map((r) => r.rating);
-    const averageRating = ratings.length
-      ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-      : 0;
-
-    return {
-      ...m,
-      rating: averageRating,
-      reviewCount: ratings.length,
-    };
-  });
+  const enriched = enrichMoviesWithRatings(movies);
 
   // Filter by rating range
   const filtered = enriched.filter((m) => {
@@ -123,5 +179,3 @@ export const searchMoviesService = async (query: any) => {
 
   return sorted;
 };
-
-

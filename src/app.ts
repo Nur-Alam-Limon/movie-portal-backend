@@ -10,6 +10,7 @@ import likeRoutes from './module/like/like.route'
 import commentRoutes from './module/comment/comment.route'
 import watchlistRoutes from './module/watchList/watchlist.route'
 import adminRoutes from './module/admin/admin.route'
+import paymentRoutes from './module/payment/payment.route'
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/likes', likeRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use('/api/admin', adminRoutes)
+app.use('/api/payments', paymentRoutes)
 
 app.use(notFound);
 app.use(errorHandler);

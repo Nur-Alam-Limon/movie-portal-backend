@@ -37,6 +37,7 @@ const verifyToken = async (req: RequestWithUser, res: Response, next: NextFuncti
   } catch (error: any) {
     console.error("Error verifying token:", error.message);
     res.status(401).json({ success: false, message: 'Unauthorized' });
+    return;
   }
 };
 

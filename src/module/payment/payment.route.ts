@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/initiate-payment", verifyToken, initiatePayment);
 router.post("/ssl/success/:id", initiatePaymentSuccess);
-router.post('/ssl/fail', initiatePaymentFailure);
-router.post('/ssl/cancel', initiatePaymentCancel);
+router.post('/ssl/fail/:id', initiatePaymentFailure);
+router.post('/ssl/cancel/:id', initiatePaymentCancel);
 
 export default router;

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
 import prisma from "../../config/client";
-import SSLCommerzPayment from 'sslcommerz-lts';
 import { sendPaymentSuccessEmail } from "../../utils/email";
+import { Request, Response } from "express";
+import SSLCommerzPayment from "sslcommerz-lts";
 
 export const initiatePayment = async (req: Request, res: Response) => {
   const {
@@ -12,6 +12,8 @@ export const initiatePayment = async (req: Request, res: Response) => {
     accessType, // 'BUY' | 'RENT'
     customer,
   } = req.body;
+
+  const fr_url = process.env.FRONTEND_URL || "";
 
   const sslcz = new SSLCommerzPayment(
     process.env.SSL_STORE_ID!,
@@ -35,27 +37,32 @@ export const initiatePayment = async (req: Request, res: Response) => {
       total_amount,
       currency: "BDT",
       tran_id,
+      ipn_url: `${fr_url}/ipn`,
       success_url: `${process.env.BACKEND_URL}/api/payments/ssl/success/${tran_id}`,
-      fail_url: `${process.env.BACKEND_URL}/api/payments/ssl/fail`,
-      cancel_url: `${process.env.BACKEND_URL}/api/payments/ssl/cancel`,
+      fail_url: `${process.env.BACKEND_URL}/api/payments/ssl/fail/${tran_id}`,
+      cancel_url: `${process.env.BACKEND_URL}/api/payments/ssl/cancel/${tran_id}`,
       cus_name: customer.name,
       cus_email: customer.email,
       cus_phone: customer.phone,
       cus_add1: customer.address || "N/A",
+      shipping_method: "Courier",
       cus_city: "Dhaka",
       cus_postcode: "1000",
       cus_country: "Bangladesh",
       product_name: "Movie Access",
       product_category: "Entertainment",
       product_profile: "digital-goods",
+      ship_name: customer.name,
+      ship_add1: customer.address || "N/A",
+      ship_city: "Dhaka",
+      ship_postcode: "1762",
+      ship_country: "Bangladesh",
     };
 
     const apiResponse = await sslcz.init(paymentData);
 
     if (apiResponse.status === "SUCCESS" && apiResponse.GatewayPageURL) {
-      res
-        .status(200)
-        .json({ GatewayPageURL: apiResponse.GatewayPageURL });
+      res.status(200).json({ GatewayPageURL: apiResponse.GatewayPageURL });
     } else {
       res
         .status(400)
@@ -70,14 +77,21 @@ export const initiatePayment = async (req: Request, res: Response) => {
 };
 
 export const initiatePaymentSuccess = async (req: Request, res: Response) => {
-  const { tran_id } = req.params;
+  const tran_id = req.params.id;
+
+  if (!tran_id) {
+    res.status(400).json({ success: false, message: "tran_id is required" });
+    return;
+  }
 
   try {
     const transaction = await prisma.transaction.findUnique({
       where: { tranId: tran_id },
     });
 
-    if (!transaction){
+    console.log("tranaction", transaction);
+
+    if (!transaction) {
       res.status(404).json({ message: "Transaction not found" });
       return;
     }
@@ -133,7 +147,12 @@ export const initiatePaymentSuccess = async (req: Request, res: Response) => {
 };
 
 export const initiatePaymentFailure = async (req: Request, res: Response) => {
-  const { tran_id } = req.body;
+  const tran_id = req.params.id;
+
+  if (!tran_id) {
+    res.status(400).json({ success: false, message: "tran_id is required" });
+    return;
+  }
 
   await prisma.transaction.updateMany({
     where: { tranId: tran_id },
@@ -144,7 +163,12 @@ export const initiatePaymentFailure = async (req: Request, res: Response) => {
 };
 
 export const initiatePaymentCancel = async (req: Request, res: Response) => {
-  const { tran_id } = req.body;
+  const tran_id = req.params.id;
+
+  if (!tran_id) {
+    res.status(400).json({ success: false, message: "tran_id is required" });
+    return;
+  }
 
   await prisma.transaction.updateMany({
     where: { tranId: tran_id },
