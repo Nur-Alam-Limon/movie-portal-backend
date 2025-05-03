@@ -63,8 +63,10 @@ export const getUserReviews = async (req: RequestWithUser, res: Response) => {
 export const getAllReviews = async (req: Request, res: Response) => {
   try {
     const reviews = await getAllReviewsService();
+    console.log('reviews', reviews)
     res.status(200).json(reviews);
   } catch (err: any) {
+    console.log('err', err);
     res.status(500).json({ message: err.message });
   }
 };

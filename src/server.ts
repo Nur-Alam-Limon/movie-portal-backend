@@ -6,5 +6,5 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Movie Portal Backend Server running at http://localhost:${PORT}`);
+  console.log(`Movie Portal Backend Server running at ${process.env.BACKEND_URL}`);
 });

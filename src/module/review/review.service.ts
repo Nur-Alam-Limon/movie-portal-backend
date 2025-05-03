@@ -60,7 +60,7 @@ export const getUserReviewsService = async (userId: string) => {
 
 export const getAllReviewsService = async () => {
   return prisma.review.findMany({
-    where: { approved: true },
+    // where: { approved: true },
     include: {
       movie: true,
       user: true,

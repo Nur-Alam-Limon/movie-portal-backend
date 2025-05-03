@@ -187,8 +187,14 @@ export const initiatePaymentCancel = async (req: Request, res: Response) => {
 
 const generateAccessLink = async (movieId: number): Promise<string> => {
   const movie = await prisma.movie.findUnique({ where: { id: movieId } });
-  return movie?.accessUrl || "";
+
+  if (!movie?.title) return "https://www.google.com/";
+
+  const encodedTitle = encodeURIComponent(`${movie.title} full movie`);
+  return `https://www.google.com/search?q=${encodedTitle}`;
 };
+
+
 
 
 export const getMyTransactions = async (req: RequestWithUser, res: Response) => {
