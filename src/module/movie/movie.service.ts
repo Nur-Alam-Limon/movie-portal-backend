@@ -1,11 +1,15 @@
 import prisma from "../../config/client";
-import { Prisma } from '@prisma/client';
+import { Prisma } from "@prisma/client";
 
 const movieIncludes = {
   reviews: {
     where: { approved: true },
     select: {
       rating: true,
+      text: true,
+      tags: true,
+      spoiler: true,
+      id: true,
       Comment: {
         include: {
           user: true,
@@ -17,7 +21,7 @@ const movieIncludes = {
         },
       },
     },
-  },  
+  },
   Watchlist: true,
   Transaction: true,
   MovieAccess: true,
@@ -99,7 +103,7 @@ export const searchMoviesService = async (query: any) => {
     filters.push({
       title: {
         contains: title,
-        mode: 'insensitive',
+        mode: "insensitive",
       },
     });
   }
@@ -116,7 +120,7 @@ export const searchMoviesService = async (query: any) => {
     filters.push({
       director: {
         contains: director,
-        mode: 'insensitive',
+        mode: "insensitive",
       },
     });
   }
@@ -143,7 +147,8 @@ export const searchMoviesService = async (query: any) => {
     });
   }
 
-  const where: Prisma.MovieWhereInput = filters.length > 0 ? { AND: filters } : {};
+  const where: Prisma.MovieWhereInput =
+    filters.length > 0 ? { AND: filters } : {};
 
   const movies = await prisma.movie.findMany({
     where,
@@ -162,15 +167,15 @@ export const searchMoviesService = async (query: any) => {
   // Sort
   const sorted = filtered.sort((a, b) => {
     switch (sort) {
-      case 'ratingDesc':
+      case "ratingDesc":
         return b.rating - a.rating;
-      case 'ratingAsc':
+      case "ratingAsc":
         return a.rating - b.rating;
-      case 'reviewCountDesc':
+      case "reviewCountDesc":
         return b.reviewCount - a.reviewCount;
-      case 'latest':
+      case "latest":
         return b.releaseYear - a.releaseYear;
-      case 'oldest':
+      case "oldest":
         return a.releaseYear - b.releaseYear;
       default:
         return 0;
